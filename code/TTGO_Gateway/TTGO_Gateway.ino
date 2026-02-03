@@ -22,6 +22,9 @@ unsigned long diagTimer = 60000;
 unsigned long lastDiagTimer = 0;
 unsigned long currentDiagMillis;
 
+unsigned long lastWifiCheck = 0;
+const unsigned long wifiCheckInterval = 5000; // check every 5s
+
 struct json_msg {
   String k;
   String id;
@@ -70,6 +73,37 @@ void setup_wifi() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 }
+
+
+void check_wifi() {
+  // run periodically to avoid spamming begin()
+  if (millis() - lastWifiCheck < wifiCheckInterval) return;
+  lastWifiCheck = millis();
+
+  if (WiFi.status() == WL_CONNECTED) return;
+
+  Serial.println();
+  Serial.println("WiFi disconnected. Reconnecting...");
+  WiFi.disconnect();
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  // short, bounded wait (non-infinite)
+  unsigned long start = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - start < 10000) {
+    delay(250);
+    Serial.print(".");
+  }
+  Serial.println();
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("WiFi reconnected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+  } else {
+    Serial.println("WiFi reconnect failed (will retry)");
+  }
+}
+
 
 
 void reconnect() {
@@ -690,6 +724,7 @@ void diag(){
 
 void loop() {
 
+check_wifi();
 
   if (Serial.available() > 0) {
     // read the incoming string:
