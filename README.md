@@ -8,7 +8,8 @@
 # TTGO_Gateway
 Simple One-Way LoRa Gateway for Home Assistant. The full version with 2-Way communication and ESP-NOW support is [CapiBridge](https://github.com/PricelessToolkit/CapiBridge)
 
-
+## 📣 Updates, Bugfixes, and Breaking Changes
+- 03.02.2026 - WiFi Reconnect.
 
 > [!NOTE]
 > Preferred board version `TTGO LoRa32 V2.1_1.6.1`
